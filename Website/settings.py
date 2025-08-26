@@ -103,8 +103,8 @@ DATABASES = {
         'NAME': 'GenerateMotif',
         'USER': 'root',
         'PASSWORD':'root',  # Sesuaikan dengan password MariaDB Anda
-        'HOST': 'localhost',  # atau 'localhost'
-        'PORT':'3306',
+        'HOST': 'mysql-db',  # atau 'localhost'
+        'PORT':'3309',
 }
 }
 
