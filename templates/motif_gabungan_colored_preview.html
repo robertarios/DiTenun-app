@@ -37,9 +37,13 @@
         width: 100%;
         height: auto;
         object-fit: contain;
-        filter: contrast(220.3); /* Kontras untuk tampilan di halaman */
-        max-width: 100%; /* Cegah upscaling */
-        max-height: 100%; /* Cegah upscaling */
+        max-width: 100%;
+        max-height: 100%;
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+        image-rendering: pixelated;
+        /* Menghapus filter kontras dan brightness */
+        {% comment %} filter: contrast(1.5) brightness(1.2) saturate(1.3); {% endcomment %}
       }
 
       .container {
@@ -292,9 +296,9 @@
       <p class="info-text">Jenis Kain: {{ motif.jenisKain|default:"-" }}</p>
       <p class="info-text">Jenis Produk: {{ motif.jenisProduk|default:"-" }}</p>
       <p class="info-text">
-        Ukuran: {% if motif.jenisProduk == 'sarung' %} Panjang 200-210 cm, Lebar 95-97 cm
-        {% elif motif.jenisProduk == 'selendang' %} Panjang 190-200 cm, Lebar 60-70 cm
-        {% else %} - {% endif %}
+        Ukuran: {% if motif.jenisProduk == 'sarung' %} Panjang 200-210 cm, Lebar
+        95-97 cm {% elif motif.jenisProduk == 'selendang' %} Panjang 190-200 cm,
+        Lebar 60-70 cm {% else %} - {% endif %}
       </p>
     </div>
 
@@ -315,51 +319,121 @@
       </div>
       <div class="download-info-row">
         <div class="download-info-label">Jenis Produk:</div>
-        <div class="download-info-value">{{ motif.jenisProduk|default:"-" }}</div>
+        <div class="download-info-value">
+          {{ motif.jenisProduk|default:"-" }}
+        </div>
       </div>
       <div class="download-info-row">
         <div class="download-info-label">Ukuran:</div>
         <div class="download-info-value">
-          {% if motif.jenisProduk == 'sarung' %} Panjang 200-210 cm, Lebar 95-97 cm
-          {% elif motif.jenisProduk == 'selendang' %} Panjang 190-200 cm, Lebar 60-70 cm
-          {% else %} - {% endif %}
+          {% if motif.jenisProduk == 'sarung' %} Panjang 200-210 cm, Lebar 95-97
+          cm {% elif motif.jenisProduk == 'selendang' %} Panjang 190-200 cm,
+          Lebar 60-70 cm {% else %} - {% endif %}
         </div>
       </div>
     </div>
 
-    <div class="container" style="max-width: 100vw; display: flex; justify-content: center; align-items: center; flex-direction: column; margin: 0; padding: 0;">
-      <div id="image-section" style="width: 100%; display: flex; flex-direction: column; gap: 0; align-items: center; margin: 0; padding: 0;">
+    <div
+      class="container"
+      style="
+        max-width: 100vw;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        margin: 0;
+        padding: 0;
+      "
+    >
+      <div
+        id="image-section"
+        style="
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          gap: 0;
+          align-items: center;
+          margin: 0;
+          padding: 0;
+        "
+      >
         {% for Motif1, Motif2 in slice %}
-        <div class="motif-row" style="gap: 0; margin: 0; padding: 0; line-height: 0;">
-          <div class="image-container grid-overlay" style="width: 90%; margin: 0; padding: 0; flex-shrink: 0;">
-            <img src="{{ Motif1 }}" data-nama-gambar="Lidi {{ Motif2 }}" style="width: 100%; height: auto; object-fit: contain; margin: 0; padding: 0;" />
+        <div
+          class="motif-row"
+          style="gap: 0; margin: 0; padding: 0; line-height: 0"
+        >
+          <div
+            class="image-container grid-overlay"
+            style="width: 90%; margin: 0; padding: 0; flex-shrink: 0"
+          >
+            <img
+              src="{{ Motif1 }}"
+              data-nama-gambar="Lidi {{ Motif2 }}"
+              style="
+                width: 100%;
+                height: auto;
+                object-fit: contain;
+                margin: 0;
+                padding: 0;
+              "
+            />
           </div>
-          <div class="lidi" style="text-align: center; margin: 0; padding: 0; line-height: 0;">Lidi {{ Motif2 }}</div>
+          <div
+            class="lidi"
+            style="text-align: center; margin: 0; padding: 0; line-height: 0"
+          >
+            Lidi {{ Motif2 }}
+          </div>
         </div>
         {% endfor %}
       </div>
     </div>
 
-    <canvas id="canvasWrapper" style="width: 100%; height: auto" hidden></canvas>
+    <canvas
+      id="canvasWrapper"
+      style="width: 100%; height: auto"
+      hidden
+    ></canvas>
     <br />
     <div class="download-container">
-      <div id="download-buttons" style="margin: 0; padding: 0;">
-        <a class="btn btn-primary" onclick="renderDivToImage('png')">Unduh Motif (PNG)</a>
-        <a class="btn btn-primary" onclick="renderDivToImage('jpg')">Unduh Motif (JPG)</a>
-        <a class="btn btn-primary" onclick="renderDivToImage('pdf')">Unduh Motif (PDF)</a>
+      <div id="download-buttons" style="margin: 0; padding: 0">
+        <a class="btn btn-primary" onclick="renderDivToImage('png')"
+          >Unduh Motif (PNG)</a
+        >
+        <a class="btn btn-primary" onclick="renderDivToImage('jpg')"
+          >Unduh Motif (JPG)</a
+        >
+        <a class="btn btn-primary" onclick="renderDivToImage('pdf')"
+          >Unduh Motif (PDF)</a
+        >
       </div>
       <div id="back-button">
-        <a class="btn btn-primary" href="/ubah_warna_combined/{{ motif.id }}" style="color: #002ba3;">Kembali</a>
+        <a
+          class="btn btn-primary"
+          href="/ubah_warna_combined/{{ motif.id }}"
+          style="color: #002ba3"
+          >Kembali</a
+        >
       </div>
     </div>
 
-    <img id="hiddenCombinedImage" src="{{ combined_image_url }}" style="display: none" />
+    <img
+      id="hiddenCombinedImage"
+      src="{{ combined_image_url }}"
+      style="display: none"
+    />
     <br />
 
     {% include "footer.html" %}
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
+      defer
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"
+      defer
+    ></script>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         const { jsPDF } = window.jspdf;
@@ -406,7 +480,7 @@
           title.style.margin = "0";
           title.style.padding = "0";
           title.style.fontSize = "2rem";
-         // title.innerText = "LEMBAR KERJA MOTIF TENUN";
+          // title.innerText = "LEMBAR KERJA MOTIF TENUN";
           titleDiv.appendChild(title);
 
           captureDiv.appendChild(titleDiv);
@@ -423,15 +497,18 @@
 
           // Terapkan filter kontras ke gambar dalam clonedImageSection
           const images = clonedImageSection.querySelectorAll("img");
-          images.forEach(img => {
+          images.forEach((img) => {
             img.crossOrigin = "anonymous";
-            img.style.filter = "contrast(220.3)"; // Pastikan kontras diterapkan
+            img.style.filter = "none"; // Pastikan kontras diterapkan
             if (!img.complete || img.naturalHeight === 0) {
               console.error("Gambar gagal dimuat:", img.src);
             }
           });
 
-          console.log("CaptureDiv created with children:", captureDiv.children.length);
+          console.log(
+            "CaptureDiv created with children:",
+            captureDiv.children.length
+          );
 
           infoBoxDownload.style.display = "none";
           document.body.appendChild(captureDiv);
@@ -462,7 +539,7 @@
             .then((canvas) => {
               const ctx = canvas.getContext("2d");
               // Terapkan kontras 220.3 pada canvas
-              applyContrast(ctx, canvas.width, canvas.height, 220.3);
+              applyContrast(ctx, canvas.width, canvas.height, 0);
 
               console.log("Canvas generated:", canvas.width, canvas.height);
               document.body.removeChild(captureDiv);
@@ -476,13 +553,21 @@
 
                 const imgWidth = canvas.width * 0.264583;
                 const imgHeight = imgWidth * (canvas.height / canvas.width);
-                const scaleFactor = Math.min(pageWidth / imgWidth, (pageHeight - 140) / imgHeight);
+                const scaleFactor = Math.min(
+                  pageWidth / imgWidth,
+                  (pageHeight - 140) / imgHeight
+                );
                 const scaledWidth = imgWidth * scaleFactor;
                 const scaledHeight = imgHeight * scaleFactor;
                 const xOffset = (pageWidth - scaledWidth) / 2;
                 const yOffset = 55;
 
-                console.log("PDF dimensions:", pageWidth, scaledWidth, scaledHeight);
+                console.log(
+                  "PDF dimensions:",
+                  pageWidth,
+                  scaledWidth,
+                  scaledHeight
+                );
                 // Tambahkan logo dengan penanganan kesalahan
                 const logo1 = new Image();
                 logo1.src = "/{{ ditenun_logo_1 }}";
@@ -495,40 +580,85 @@
                   logo2.onload = () => {
                     pdf.addImage(logo2, "PNG", pageWidth - 50, 20, 30, 30);
                     pdf.setFontSize(20);
-                    pdf.text("LEMBAR KERJA MOTIF TENUN", pageWidth / 2, 40, { align: "center" });
+                    pdf.text("LEMBAR KERJA MOTIF TENUN", pageWidth / 2, 40, {
+                      align: "center",
+                    });
                     pdf.setDrawColor(0, 0, 0);
                     pdf.setLineWidth(0.9);
                     pdf.line(30, 55, pageWidth - 30, 55);
-                    pdf.addImage(imgData, "JPEG", xOffset, yOffset, scaledWidth, scaledHeight);
-                    pdf.save(`lembar_kerja_motif_tenun_${new Date().toISOString().slice(0,10)}.pdf`);
+                    pdf.addImage(
+                      imgData,
+                      "JPEG",
+                      xOffset,
+                      yOffset,
+                      scaledWidth,
+                      scaledHeight
+                    );
+                    pdf.save(
+                      `lembar_kerja_motif_tenun_${new Date()
+                        .toISOString()
+                        .slice(0, 10)}.pdf`
+                    );
                   };
                   logo2.onerror = () => {
                     console.error("Gagal memuat logo 2:", logo2.src);
-                    alert("Gagal memuat logo kedua. PDF akan diunduh tanpa logo kedua.");
+                    alert(
+                      "Gagal memuat logo kedua. PDF akan diunduh tanpa logo kedua."
+                    );
                     pdf.setFontSize(20);
-                    pdf.text("LEMBAR KERJA MOTIF TENUN", pageWidth / 2, 40, { align: "center" });
+                    pdf.text("LEMBAR KERJA MOTIF TENUN", pageWidth / 2, 40, {
+                      align: "center",
+                    });
                     pdf.setDrawColor(0, 0, 0);
                     pdf.setLineWidth(0.9);
                     pdf.line(30, 55, pageWidth - 30, 55);
-                    pdf.addImage(imgData, "JPEG", xOffset, yOffset, scaledWidth, scaledHeight);
-                    pdf.save(`lembar_kerja_motif_tenun_${new Date().toISOString().slice(0,10)}.pdf`);
+                    pdf.addImage(
+                      imgData,
+                      "JPEG",
+                      xOffset,
+                      yOffset,
+                      scaledWidth,
+                      scaledHeight
+                    );
+                    pdf.save(
+                      `lembar_kerja_motif_tenun_${new Date()
+                        .toISOString()
+                        .slice(0, 10)}.pdf`
+                    );
                   };
                 };
                 logo1.onerror = () => {
                   console.error("Gagal memuat logo 1:", logo1.src);
-                  alert("Gagal memuat logo pertama. PDF akan diunduh tanpa logo pertama.");
+                  alert(
+                    "Gagal memuat logo pertama. PDF akan diunduh tanpa logo pertama."
+                  );
                   pdf.setFontSize(20);
-                  pdf.text("LEMBAR KERJA MOTIF TENUN", pageWidth / 2, 40, { align: "center" });
+                  pdf.text("LEMBAR KERJA MOTIF TENUN", pageWidth / 2, 40, {
+                    align: "center",
+                  });
                   pdf.setDrawColor(0, 0, 0);
                   pdf.setLineWidth(0.9);
                   pdf.line(30, 55, pageWidth - 30, 55);
-                  pdf.addImage(imgData, "JPEG", xOffset, yOffset, scaledWidth, scaledHeight);
-                  pdf.save(`lembar_kerja_motif_tenun_${new Date().toISOString().slice(0,10)}.pdf`);
+                  pdf.addImage(
+                    imgData,
+                    "JPEG",
+                    xOffset,
+                    yOffset,
+                    scaledWidth,
+                    scaledHeight
+                  );
+                  pdf.save(
+                    `lembar_kerja_motif_tenun_${new Date()
+                      .toISOString()
+                      .slice(0, 10)}.pdf`
+                  );
                 };
               } else {
                 const link = document.createElement("a");
                 link.href = canvas.toDataURL(`image/${format}`, 0.8);
-                link.download = `lembar_kerja_motif_tenun_${new Date().toISOString().slice(0,10)}.${format}`;
+                link.download = `lembar_kerja_motif_tenun_${new Date()
+                  .toISOString()
+                  .slice(0, 10)}.${format}`;
                 link.click();
               }
             })
@@ -549,7 +679,7 @@
 
         // Periksa apakah gambar dimuat saat halaman dimuat
         const images = document.querySelectorAll(".image-container img");
-        images.forEach(img => {
+        images.forEach((img) => {
           img.crossOrigin = "anonymous";
           img.addEventListener("error", () => {
             console.error("Gagal memuat gambar:", img.src);
