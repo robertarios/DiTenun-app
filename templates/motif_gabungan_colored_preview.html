@@ -44,6 +44,7 @@
         image-rendering: pixelated;
         /* Menghapus filter kontras dan brightness */
         {% comment %} filter: contrast(1.5) brightness(1.2) saturate(1.3); {% endcomment %}
+
       }
 
       .container {
@@ -439,15 +440,15 @@
         const { jsPDF } = window.jspdf;
 
         // Fungsi untuk menerapkan kontras pada canvas
-        function applyContrast(ctx, width, height, contrast) {
+        function applyContrast(ctx, width, height, contrast = 0) {
           const imageData = ctx.getImageData(0, 0, width, height);
           const data = imageData.data;
           const factor = (259 * (contrast + 255)) / (255 * (259 - contrast));
 
           for (let i = 0; i < data.length; i += 4) {
-            data[i] = factor * (data[i] - 128) + 128; // Red
-            data[i + 1] = factor * (data[i + 1] - 128) + 128; // Green
-            data[i + 2] = factor * (data[i + 2] - 128) + 128; // Blue
+            data[i] = factor * (data[i] - 128) + 128; // Merah
+            data[i + 1] = factor * (data[i + 1] - 128) + 128; // Hijau
+            data[i + 2] = factor * (data[i + 2] - 128) + 128; // Biru
           }
           ctx.putImageData(imageData, 0, 0);
         }
@@ -528,13 +529,15 @@
           document.body.appendChild(loadingIndicator);
 
           html2canvas(captureDiv, {
-            scale: 2,
+            scale: 3,
             useCORS: true,
             allowTaint: true,
             width: captureDiv.scrollWidth,
             height: captureDiv.scrollHeight,
             windowWidth: captureDiv.scrollWidth,
             windowHeight: captureDiv.scrollHeight,
+            logging: true,
+            imageTimeout:1000
           })
             .then((canvas) => {
               const ctx = canvas.getContext("2d");
@@ -547,7 +550,7 @@
 
               if (format === "pdf") {
                 const pdf = new jsPDF("p", "mm", "a4");
-                const imgData = canvas.toDataURL("image/jpeg", 0.8);
+                const imgData = canvas.toDataURL("image/jpeg", 1.0);
                 const pageWidth = pdf.internal.pageSize.getWidth();
                 const pageHeight = pdf.internal.pageSize.getHeight();
 

@@ -1138,72 +1138,73 @@
           }
           return cookieValue;
         }
+        
         async function combineMotifs() {
-          try {
-            const motifImages = Array.from(combinedMotifContainer.querySelectorAll("img"));
-            if (motifImages.length === 0) {
-              alert("Tidak ada gambar ditemukan.");
-              return;
-            }
-            const canvasWidth = Math.min(parseInt(combinedMotifContainer.style.maxWidth) || 500, 300);
-            let totalHeight = 0;
-            const loadedImages = [];
-            for (let img of motifImages) {
-              const loaded = await loadImage(img.src);
-              const scale = Math.min(300 / loaded.width, 1);
-              const scaledHeight = loaded.height * scale;
-              loadedImages.push({ image: loaded, height: scaledHeight });
-              totalHeight += scaledHeight;
-            }
-            const canvas = document.createElement("canvas");
-            canvas.width = canvasWidth;
-            canvas.height = Math.min(totalHeight, 300);
-            const ctx = canvas.getContext("2d");
-            ctx.fillStyle = "white";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            let yOffset = 0;
-            for (let { image, height } of loadedImages) {
-              const scale = canvasWidth / image.width;
-              ctx.drawImage(image, 0, yOffset, canvasWidth, height);
-              yOffset += height;
-            }
-            const dataURL = canvas.toDataURL("image/png");
-            const blob = await (await fetch(dataURL)).blob();
-            const imgAsal = document.querySelector('img[data-jenis="asal"]');
-            const imgBeforeSrc = imgAsal ? imgAsal.src : "";
-            const formDataUpload = new FormData();
-            formDataUpload.append("file", blob, "motif_gabung.png");
-            formDataUpload.append("imgBefore", imgBeforeSrc);
-            formDataUpload.append("imgAfter", "/media/uploads/riskia.png");
-            formDataUpload.append("urutanLidi", urutanGabunganArray.join(","));
-            formDataUpload.append("jenisGenerate", "otomatis");
-            formDataUpload.append("user", "riskia");
-            formDataUpload.append("csrfmiddlewaretoken", getCookie("csrftoken"));
-            formDataUpload.append("jmlBaris", urutanGabunganArray.length.toString());
-            formDataUpload.append("jenisKain", document.getElementById("jenis_kain").value);
-            formDataUpload.append("jenisProduk", document.getElementById("jenis_produk").value);
-            const response = await fetch("/generator/PostImageGabungan", {
-              method: "POST",
-              body: formDataUpload,
-              headers: {
-                "X-CSRFToken": getCookie("csrftoken"),
-              },
-            });
-            if (response.ok) {
-              const responseData = await response.json();
-              const motifId = responseData.motif_id;
-              const successModal = new bootstrap.Modal(document.getElementById("successModal"));
-              successModal.show();
-              windowSavedMotifId = motifId;
-            } else {
-              const errorText = await response.text();
-              throw new Error("Gagal menyimpan motif: " + errorText);
-            }
-          } catch (error) {
-            console.error("Error:", error);
-            alert("Gagal menyimpan motif: " + error.message);
-          }
+    try {
+        const motifImages = Array.from(combinedMotifContainer.querySelectorAll("img"));
+        if (motifImages.length === 0) {
+            alert("Tidak ada gambar ditemukan.");
+            return;
         }
+        const canvasWidth = Math.min(parseInt(combinedMotifContainer.style.maxWidth) || 500, 500); // Lebar tetap
+        let totalHeight = 0;
+        const loadedImages = [];
+        for (let img of motifImages) {
+            const loaded = await loadImage(img.src);
+            const scale = canvasWidth / loaded.width; // Skala berdasarkan lebar
+            const scaledHeight = loaded.height * scale;
+            loadedImages.push({ image: loaded, height: scaledHeight });
+            totalHeight += scaledHeight; // Akumulasi tinggi tanpa batasan
+        }
+        const canvas = document.createElement("canvas");
+        canvas.width = canvasWidth;
+        canvas.height = totalHeight; // Gunakan tinggi total tanpa batasan
+        const ctx = canvas.getContext("2d");
+        ctx.fillStyle = "white";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        let yOffset = 0;
+        for (let { image, height } of loadedImages) {
+            const scale = canvasWidth / image.width;
+            ctx.drawImage(image, 0, yOffset, canvasWidth, height);
+            yOffset += height;
+        }
+        const dataURL = canvas.toDataURL("image/png");
+        const blob = await (await fetch(dataURL)).blob();
+        const imgAsal = document.querySelector('img[data-jenis="asal"]');
+        const imgBeforeSrc = imgAsal ? imgAsal.src : "";
+        const formDataUpload = new FormData();
+        formDataUpload.append("file", blob, "motif_gabung.png");
+        formDataUpload.append("imgBefore", imgBeforeSrc);
+        formDataUpload.append("imgAfter", "/media/uploads/riskia.png");
+        formDataUpload.append("urutanLidi", urutanGabunganArray.join(","));
+        formDataUpload.append("jenisGenerate", "otomatis");
+        formDataUpload.append("user", "riskia");
+        formDataUpload.append("csrfmiddlewaretoken", getCookie("csrftoken"));
+        formDataUpload.append("jmlBaris", urutanGabunganArray.length.toString());
+        formDataUpload.append("jenisKain", document.getElementById("jenis_kain").value);
+        formDataUpload.append("jenisProduk", document.getElementById("jenis_produk").value);
+        const response = await fetch("/generator/PostImageGabungan", {
+            method: "POST",
+            body: formDataUpload,
+            headers: {
+                "X-CSRFToken": getCookie("csrftoken"),
+            },
+        });
+        if (response.ok) {
+            const responseData = await response.json();
+            const motifId = responseData.motif_id;
+            const successModal = new bootstrap.Modal(document.getElementById("successModal"));
+            successModal.show();
+            windowSavedMotifId = motifId;
+        } else {
+            const errorText = await response.text();
+            throw new Error("Gagal menyimpan motif: " + errorText);
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Gagal menyimpan motif: " + error.message);
+    }
+}
         combineMotifs();
       }
 

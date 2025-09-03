@@ -18,37 +18,40 @@
         image-rendering: pixelated !important;
         image-rendering: -moz-crisp-edges !important;
         image-rendering: crisp-edges !important;
-        filter: contrast(1.5); /* Consistent contrast for original motif */
-        will-change: filter; /* Optimize rendering performance */
+        {% comment %} filter: contrast(1.5);
+        will-change: filter; {% endcomment %}
         border: 1px solid #ddd;
         background-color: white;
         width: 100%;
         height: auto;
         margin: 15px auto;
         object-fit: contain;
+        max-width: 1000px; /* PERUBAHAN: Samakan ukuran tampilan dengan motif gabungan */
+        max-height: 1000px; /* PERUBAHAN: Samakan ukuran tampilan dengan motif gabungan */
     }
 
-    /* Specific adjustment for combined motif to avoid shadow-like effects */
     #redLineImage {
-        filter: contrast(220.3); /* Reduced contrast for clarity without artifacts */
-        max-width: 100%; /* Prevent upscaling */
-        max-height: 100%; /* Prevent upscaling */
+       filter: contrast(220.3);
+        max-width: 1000px; /* PERUBAHAN: Samakan ukuran tampilan dengan motif gabungan */
+        max-height: 1000px; /* PERUBAHAN: Samakan ukuran tampilan dengan motif gabungan */
+        margin-left: auto; /* PERUBAHAN: Sentralisasi gambar untuk estetika */
+        margin-right: auto; /* PERUBAHAN: Sentralisasi gambar untuk estetika */
+        margin-top: 20px;
     }
 
     .motif-container {
         text-align: center;
         margin: 20px auto;
         background-color: white;
-        padding: 15px; 
+        padding: 15px;
         border-radius: 5px;
-        box-shadow: 0 0 5px rgba(0,0,0,0.1); /* Default shadow for original motif */
+        box-shadow: 0 0 5px rgba(0,0,0,0.1);
         width: 100%;
         max-width: 1000px;
     }
 
-    /* Remove shadow for combined motif container */
     .no-shadow-container {
-        box-shadow: none; /* Remove shadow to avoid "bayangan" effect */
+        box-shadow: none;
     }
     
     .debug-path {
@@ -86,9 +89,9 @@
         z-index: 1;
     }
 
-    /* Grid overlay */
     .grid-overlay {
         position: relative;
+        grid-template-rows: repeat(20, 1fr); /* PERUBAHAN: Samakan grid untuk motif tunggal dengan gabungan */
     }
 
     .grid-overlay img {
@@ -106,11 +109,11 @@
         height: 100%;
         pointer-events: none;
         display: grid;
-        grid-template-columns: repeat(20, 1fr); /* Reduced grid density for clarity */
+        grid-template-columns: repeat(20, 1fr);
         grid-template-rows: repeat(20, 1fr);
         z-index: 20;
         background-image: linear-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 1px),
-                          linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px); /* Reduced opacity */
+                          linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
         background-size: calc(100% / 20) calc(100% / 20);
     }
 
@@ -214,7 +217,6 @@
         line-height: 0;
     }
 
-    /* Gaya kustom untuk tombol kembali */
     .back-btn {
         background-color: transparent;
         border: 2px solid #002ba3;
@@ -228,7 +230,7 @@
     }
 
     .back-btn:hover {
-        background-color: #e6e6ff; /* Warna hover ringan */
+        background-color: #e6e6ff;
     }
 
     .lidi-motif-asal {
@@ -239,7 +241,6 @@
         line-height: 0;
     }
 
-    /* Gaya kustom untuk tombol motif */
     .motif-btn {
         background-color: #002BA3;
         color: #fff;
@@ -249,7 +250,7 @@
     }
 
     .btn-spacing {
-        margin-top: 10px; /* Jarak vertikal antar tombol */
+        margin-top: 10px;
     }
 
     .btn-block {
@@ -258,20 +259,18 @@
     }
 
     .motif-btn:hover {
-        background-color: #001f7a; /* Warna hover lebih gelap */
+        background-color: #001f7a;
     }
 
-    /* Gaya untuk teks Urutan Lidi */
     .lidi-text {
-        font-size: 1.2rem; /* Ukuran teks yang lebih besar */
-        font-weight: bold; /* Opsional: Membuat teks lebih tebal */
-        color: #333; /* Warna teks yang lebih jelas */
-        margin-top: 10px; /* Jarak dari gambar */
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #333;
+        margin-top: 10px;
     }
     </style>
 </head>
 <body>
-    <!-- Page Loader -->
     <div id="loader-wrapper">
         <div id="loader"></div>
         <div class="loader-section section-left"></div>
@@ -282,13 +281,12 @@
     
     {% if error_messages %}
     <div class="alert alert-danger">
-        
-            {% for message in error_messages %}
-                <p>{{ message }}</p>
-            {% endfor %}
-        </div>
-        <a href="{% url 'regenerate_motif' motif.id %}" class="btn btn-primary">Regenerate Motif</a>
-{% endif %}
+        {% for message in error_messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    </div>
+    <a href="{% url 'regenerate_motif' motif.id %}" class="btn btn-primary">Regenerate Motif</a>
+    {% endif %}
 
     <!-- Tambahkan keterangan jika ini adalah motif gabungan -->
     {% if motif.jenisGenerate == "combine" %}
@@ -299,20 +297,18 @@
     
     <div class="container-fluid tm-container-content tm-mt-60">
         <div class="row tm-mb-90">                     
-            <div class="col-xl-8 col-lg-8 col-md-10 col-sm-12"> <!-- Ubah kolom agar lebih lebar -->
+            <div class="col-xl-8 col-lg-8 col-md-10 col-sm-12">
                 <h2 class="tm-text-primary text-center">Motif Asal</h2>
                 <div class="motif-container">
                     <img id="lidiImage" class="motif-grid" alt="Motif Asal">
-                    <!-- Urutan lidi dihapus dari sini -->
                     <div id="lidiError" class="error-placeholder" style="display: none;">
                         <div>Gambar motif tidak dapat dimuat</div>
                     </div>
                 </div>
                 
                 <h2 class="tm-text-primary text-center mt-4">Hasil Motif</h2>
-                <div class="motif-container no-shadow-container">
-                    <img id="redLineImage" class="motif-grid" alt="Hasil Motif">
-                    <!-- Urutan lidi dihapus dari sini -->
+                <div class="motif-container no-shadow-container image-container">
+                    <img id="redLineImage" class="motif-grid" alt="Hasil Motif" style="max-height: none; height: auto;">
                     <div id="redLineError" class="error-placeholder" style="display: none;">
                         <div>Gambar motif tidak dapat dimuat</div>
                     </div>
@@ -320,7 +316,6 @@
             </div>
             <div class="col-xl-4 col-lg-5 col-md-6 col-sm-12">
                 <div class="tm-bg-gray tm-video-details">
-                    <!-- Bagian Urutan Lidi dipindahkan ke sini -->
                     <div class="mb-4">
                         <div class="text-center mb-3">
                             <h5 class="tm-text-primary">Urutan Lidi Motif Asal</h5>
@@ -435,7 +430,6 @@
             var lidiPath = "{{ motif_asal }}";
             var redLinePath = "{{ RedLine }}";
             
-            // Log untuk debugging
             console.log("Original Lidi Path:", lidiPath);
             console.log("Original RedLine Path:", redLinePath);
             
@@ -448,26 +442,22 @@
             var img = document.getElementById(imgId);
             var errorDiv = document.getElementById(errorId);
             
-            // Daftar kemungkinan path untuk dicoba
             var pathVariations = [
                 originalPath,
                 "/" + originalPath,
-                originalPath.replace(/^\//, ""), // Hapus slash di depan jika ada
-                "/media" + originalPath,    // Coba dengan /media di depan
+                originalPath.replace(/^\//, ""),
+                "/media" + originalPath,
                 "/media/" + originalPath.replace(/^\//, ""),
                 "{% get_media_prefix %}" + originalPath.replace(/^\//, ""),
                 "/static" + originalPath,
-                "/static/" + originalPath.replace(/^\//, "") // Coba dengan /static/
+                "/static/" + originalPath.replace(/^\//, "")
             ];
             
-            // Set variabel untuk menandai jika sudah berhasil
             var success = false;
             var currentPathIndex = 0;
             
-            // Fungsi untuk mencoba path berikutnya
             function tryNextPath() {
                 if (currentPathIndex >= pathVariations.length) {
-                    // Semua path sudah dicoba, tampilkan error
                     console.error("Failed to load image after trying all path variations for", imgId);
                     errorDiv.style.display = "flex";
                     img.style.display = "none";
@@ -477,30 +467,24 @@
                 var currentPath = pathVariations[currentPathIndex];
                 console.log("Trying path variation", currentPathIndex + 1, "for", imgId, ":", currentPath);
                 
-                // Set path gambar
                 img.src = currentPath;
                 currentPathIndex++;
             }
             
-            // Event handler untuk success
             img.onload = function() {
                 console.log("Success loading image:", img.src, "Dimensions:", img.naturalWidth, "x", img.naturalHeight);
                 success = true;
                 errorDiv.style.display = "none";
                 img.style.display = "block";
                 
-                // Tambahkan kelas CSS agar grid terlihat
                 img.classList.add("loaded");
             };
             
-            // Event handler untuk error
             img.onerror = function() {
                 console.error("Failed to load image with path:", img.src);
-                // Coba path berikutnya
                 tryNextPath();
             };
             
-            // Mulai mencoba path pertama
             tryNextPath();
         }
         
@@ -532,7 +516,6 @@
                     const overlayWidth = img.naturalWidth; 
                     const overlayHeight = img.naturalHeight; 
 
-                    // Create grid container dynamically
                     const gridOverlay = document.createElement("div");
                     gridOverlay.classList.add("grid-overlay");
                     gridOverlay.style.position = "absolute";
@@ -549,7 +532,6 @@
                     gridOverlay.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
                     gridOverlay.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
 
-                    // Add grid cells dynamically
                     for (let i = 0; i < columns * rows; i++) {
                         const cell = document.createElement("div");
                         cell.style.border = "1px solid rgba(0, 0, 0, 0.7)";
